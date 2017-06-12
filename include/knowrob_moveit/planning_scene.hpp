@@ -82,20 +82,31 @@ namespace knowrob_moveit
         {
           ROS_INFO("Parsing urdf started.");
           boost::shared_ptr<urdf::Model> urdf_ptr(new urdf::Model());
+
           if (!urdf_ptr->initString(urdf))
             throw std::runtime_error("Could not parse given urdf. Aborting.");
           ROS_INFO("Parsing urdf done.");
   
           ROS_INFO("Parsing srdf started.");
           boost::shared_ptr<srdf::Model> srdf_ptr(new srdf::Model());
+
+
           if (!srdf_ptr->initString(*urdf_ptr, srdf))
             throw std::runtime_error("Could not parse given srdf. Aborting.");
           ROS_INFO("Parsing srdf done.");
      
           ROS_INFO("Creation planning scene started.");
-          boost::shared_ptr<const srdf::Model> srdf_const_ptr = srdf_ptr;
-          boost::shared_ptr<const urdf::Model> urdf_const_ptr = urdf_ptr;
-      
+          //boost::shared_ptr<const srdf::Model> srdf_const_ptr = srdf_ptr;
+          //boost::shared_ptr<const urdf::Model> urdf_const_ptr = urdf_ptr;
+          const boost::shared_ptr<srdf::Model> srdf_const_ptr = srdf_ptr;
+          const boost::shared_ptr<urdf::Model> urdf_const_ptr = urdf_ptr;
+
+
+
+          //Constructor: But it has conversions to take boost::shared_ptrs
+          //PlanningScene(const urdf::ModelInterfaceSharedPtr& urdf_model, const srdf::ModelConstSharedPtr& srdf_model,
+          //collision_detection::WorldPtr world = collision_detection::WorldPtr(new collision_detection::World()));
+
           ps_ptr_ = planning_scene::PlanningScenePtr(new planning_scene::PlanningScene(urdf_const_ptr, srdf_const_ptr));
           urdf_hash_ = new_urdf_hash;
           srdf_hash_ = new_srdf_hash;
